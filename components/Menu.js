@@ -1,10 +1,22 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Animated, TouchableOpacity, Dimensions } from 'react-native';
+import { connect } from 'react-redux';
 import { Ionicons } from '@expo/vector-icons';
 import MenuItem from './MenuItem';
 
 const screenHeight = Dimensions.get('window').height;
+function mapStateToProps(state) {
+  return { action: state.action };
+}
+function mapDispatchToProps(dispatch) {
+  return {
+    closeMenu: () =>
+      dispatch({
+        type: 'CLOSE_MENU',
+      }),
+  };
+}
 
 class Menu extends React.Component {
   state = {
@@ -12,16 +24,25 @@ class Menu extends React.Component {
   };
 
   componentDidMount() {
-    Animated.spring(this.state.top, {
-      toValue: 0,
-      useNativeDriver: false,
-    }).start();
+    this.toggleMenu();
+  }
+  componentDidUpdate() {
+    this.toggleMenu();
   }
   toggleMenu = () => {
-    Animated.spring(this.state.top, {
-      toValue: screenHeight,
-      useNativeDriver: false,
-    }).start();
+    if (this.props.action == 'openMenu') {
+      Animated.spring(this.state.top, {
+        toValue: 54,
+        useNativeDriver: false,
+      }).start();
+    }
+
+    if (this.props.action == 'closeMenu') {
+      Animated.spring(this.state.top, {
+        toValue: screenHeight,
+        useNativeDriver: false,
+      }).start();
+    }
   };
 
   render() {
@@ -33,7 +54,7 @@ class Menu extends React.Component {
           <Subtitle>meng@designcode.io</Subtitle>
         </Cover>
         <TouchableOpacity
-          onPress={this.toggleMenu}
+          onPress={this.props.closeMenu}
           style={{
             position: 'absolute',
             top: 120,
@@ -61,7 +82,7 @@ class Menu extends React.Component {
   }
 }
 
-export default Menu;
+export default connect(mapStateToProps, mapDispatchToProps)(Menu);
 
 const Container = styled.View`
   position: absolute;
@@ -69,6 +90,8 @@ const Container = styled.View`
   width: 100%;
   height: 100%;
   z-index: 100;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
@@ -84,6 +107,8 @@ const Content = styled.View`
   height: ${screenHeight}px;
   background: #f0f3f5;
   padding: 50px;
+  border-radius: 10px;
+  overflow: hidden;
 `;
 
 const CloseView = styled.View`
