@@ -1,4 +1,3 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import {
   ScrollView,
@@ -6,6 +5,7 @@ import {
   SafeAreaView,
   Animated,
   Easing,
+  StatusBar,
 } from 'react-native';
 import styled from 'styled-components';
 import { Ionicons } from '@expo/vector-icons';
@@ -32,44 +32,73 @@ function mapDispatchToProps(dispatch) {
 class HomeScreen extends React.Component {
   state = {
     scale: new Animated.Value(1),
+    opacity: new Animated.Value(1),
   };
+  componentDidMount() {
+    StatusBar.setBarStyle('dark-content', true);
+  }
   componentDidUpdate() {
     this.toggleMenu();
   }
   toggleMenu = () => {
     if (this.props.action == 'openMenu') {
-      Animated.spring(this.state.scale, {
+      Animated.timing(this.state.scale, {
         toValue: 0.9,
+        duration: 300,
+        easing: Easing.in(),
         useNativeDriver: false,
       }).start();
+
+      Animated.spring(this.state.opacity, {
+        toValue: 0.5,
+        useNativeDriver: false,
+      }).start();
+
+      StatusBar.setBarStyle('light-content', true);
     }
 
     if (this.props.action == 'closeMenu') {
-      Animated.spring(this.state.scale, {
+      Animated.timing(this.state.scale, {
+        toValue: 1,
+        duration: 300,
+        easing: Easing.in(),
+        useNativeDriver: false,
+      }).start();
+      Animated.spring(this.state.opacity, {
         toValue: 1,
         useNativeDriver: false,
       }).start();
+      StatusBar.setBarStyle('dark-content', true);
     }
   };
 
   render() {
     return (
-      <AnimatedContainer>
+      <RootView>
         <Menu />
-        <SafeAreaView>
-          <ScrollView style={{ height: '100%' }}>
-            {this.renderTitleBar()}
+        <AnimatedContainer
+          style={{
+            transform: [{ scale: this.state.scale }],
+            opacity: this.state.opacity,
+          }}
+        >
+          <SafeAreaView>
+            <ScrollView style={{ height: '100%' }}>
+              {this.renderTitleBar()}
 
-            {this.logoBar()}
+              {this.logoBar()}
 
-            <Subtitle>Continue Learning</Subtitle>
+              <Subtitle>Continue Learning</Subtitle>
 
-            {this.continueLearning()}
+              {this.continueLearning()}
 
-            {courses.map((course, index) => this.renderCourses(index, course))}
-          </ScrollView>
-        </SafeAreaView>
-      </AnimatedContainer>
+              {courses.map((course, index) =>
+                this.renderCourses(index, course)
+              )}
+            </ScrollView>
+          </SafeAreaView>
+        </AnimatedContainer>
+      </RootView>
     );
   }
 
@@ -146,10 +175,15 @@ class HomeScreen extends React.Component {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(HomeScreen);
+const RootView = styled.View`
+  background: black;
+  flex: 1;
+`;
 
 const Container = styled.View`
   background: #f0f3f5;
   flex: 1;
+  border-radius: 10px;
 `;
 const AnimatedContainer = Animated.createAnimatedComponent(Container);
 const TitleBar = styled.View`

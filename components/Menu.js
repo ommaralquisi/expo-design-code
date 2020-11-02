@@ -107,8 +107,6 @@ const Content = styled.View`
   height: ${screenHeight}px;
   background: #f0f3f5;
   padding: 50px;
-  border-radius: 10px;
-  overflow: hidden;
 `;
 
 const CloseView = styled.View`
