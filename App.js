@@ -7,68 +7,94 @@ import { Ionicons } from '@expo/vector-icons';
 import Card from './components/Card';
 import Logo from './components/Logo';
 import Course from './components/Course';
+import Menu from './components/Menu';
 
 export default function App() {
   return (
     <Container>
+      <Menu />
       <SafeAreaView>
         <ScrollView style={{ height: '100%' }}>
-          <TitleBar>
-            <Avatar source={require('./assets/avatar.jpg')} />
-            <Title>Welcome back,</Title>
-            <Name>Meng</Name>
-            <Ionicons
-              name="ios-notifications"
-              size={32}
-              color="#4775f2"
-              style={{ position: 'absolute', right: 20, top: 5 }}
-            />
-          </TitleBar>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            style={{ padding: 20, paddingLeft: 12, paddingTop: 30 }}
-          >
-            {logos.map((logo, index) => (
-              <Logo key={index} image={logo.image} text={logo.text} />
-            ))}
-          </ScrollView>
+          {renderTitleBar()}
+
+          {logoBar()}
 
           <Subtitle>Continue Learning</Subtitle>
-          <ScrollView
-            horizontal
-            style={{ paddingBottom: 30 }}
-            showsHorizontalScrollIndicator={false}
-          >
-            {cards.map((card, index) => (
-              <Card
-                key={index}
-                title={card.title}
-                image={card.image}
-                caption={card.caption}
-                logo={card.logo}
-                subtitle={card.subtitle}
-              />
-            ))}
-          </ScrollView>
 
-          {courses.map((course, index) => (
-            <Course
-              key={index}
-              image={course.image}
-              title={course.title}
-              subtitle={course.subtitle}
-              logo={course.logo}
-              author={course.author}
-              avatar={course.avatar}
-              caption={course.caption}
-            />
-          ))}
+          {continueLearning()}
+
+          {courses.map((course, index) => renderCourses(index, course))}
         </ScrollView>
       </SafeAreaView>
     </Container>
   );
+
+  function renderCourses(index, course) {
+    return (
+      <Course
+        key={index}
+        image={course.image}
+        title={course.title}
+        subtitle={course.subtitle}
+        logo={course.logo}
+        author={course.author}
+        avatar={course.avatar}
+        caption={course.caption}
+      />
+    );
+  }
+
+  function continueLearning() {
+    return (
+      <ScrollView
+        horizontal
+        style={{ paddingBottom: 30 }}
+        showsHorizontalScrollIndicator={false}
+      >
+        {cards.map((card, index) => (
+          <Card
+            key={index}
+            title={card.title}
+            image={card.image}
+            caption={card.caption}
+            logo={card.logo}
+            subtitle={card.subtitle}
+          />
+        ))}
+      </ScrollView>
+    );
+  }
+
+  function logoBar() {
+    return (
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={{ padding: 20, paddingLeft: 12, paddingTop: 30 }}
+      >
+        {logos.map((logo, index) => (
+          <Logo key={index} image={logo.image} text={logo.text} />
+        ))}
+      </ScrollView>
+    );
+  }
 }
+
+const renderTitleBar = () => {
+  return (
+    <TitleBar>
+      <Avatar source={require('./assets/avatar.jpg')} />
+      <Title>Welcome back,</Title>
+      <Name>Meng</Name>
+      <Ionicons
+        name="ios-notifications"
+        size={32}
+        color="#4775f2"
+        style={{ position: 'absolute', right: 20, top: 5 }}
+      />
+    </TitleBar>
+  );
+};
 
 const Container = styled.View`
   background: #f0f3f5;
@@ -171,6 +197,7 @@ const cards = [
     logo: require('./assets/logo-react.png'),
   },
 ];
+
 const courses = [
   {
     title: 'Prototype in InVision Studio',
